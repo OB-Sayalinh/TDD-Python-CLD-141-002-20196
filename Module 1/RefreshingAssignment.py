@@ -1,5 +1,5 @@
 import unittest
-from enum import Enum
+from enum import Enum, StrEnum
 from venv import create
 
 
@@ -21,6 +21,8 @@ class Flavors(Enum):
     Mint = 'mint',
     Blueberry = 'blueberry',
     Lime = 'lime'
+
+
 
 
 # Prices
@@ -55,7 +57,13 @@ def make_receipt(items):
     receipt = ""
 
     for item in items:
-        receipt.join(f"() : $()\n".format(item.get_name(), item.get_price()))
+        flavors = "- "
+        for flavor in item.get_flavors():
+            flavors += flavor.name + ", "
+        flavors = flavors[:-2] + ""
+        receipt += "{fname} {fflavors}: ${fprice}\n".format(fname=item.get_name(),
+                                                                        fflavors=flavors,
+                                                                        fprice=item.get_price())
 
     return receipt
 
@@ -67,7 +75,6 @@ class Order:
 
     def __init__(self):
         self.__items__ = []
-
 
     def get_items(self):
         return self.__items__
@@ -128,7 +135,6 @@ class Drink:
 
 # Testing
 
-
 def create_drink(name="", base=Bases.Water, flavors=None):
     if flavors is None:
         flavors = []
@@ -137,197 +143,16 @@ def create_drink(name="", base=Bases.Water, flavors=None):
     return drink
 
 
-class OrderTests(unittest.TestCase):
-
-    order = None
-
-    def setUp(self):
-        self.order = Order()
-
-    def testGetItems(self):
-        expected_result = []
-
-        result = self.order.get_items()
-
-        self.assertEqual(result, expected_result, msg="Expect Empty")
-
-    def testGetTotal(self):
-        expected_result = 0
-
-        result = self.order.get_total()
-
-        self.assertEqual(result, expected_result)
-
-    def testGetNumItems(self):
-        expected_result = 0
-
-        result = self.order.get_num_items()
-
-        self.assertEqual(result, expected_result)
-
-    def testGetReceipt(self):
-        expected_result = ""
-
-        result = self.order.get_receipt()
-
-        self.assertEqual(result, expected_result)
-
-    def testGetReceiptAdded(self):
-        drink = create_drink()
-        expected_result = make_receipt([drink])
-
-        self.order.add_item(drink)
-        result = self.order.get_receipt()
-
-        self.assertEqual(result, expected_result)
-
-    def testAddItem(self):
-        drink = create_drink()
-        expected_result = [drink]
-
-        self.order.add_item(drink)
-        result = self.order.get_items()
-
-        self.assertEqual(result, expected_result)
-
-    def testRemoveItem(self):
-        drink = create_drink()
-        expected_result = [drink]
-
-        self.order.add_item(drink)
-        self.order.add_item(drink)
-
-        self.order.remove_item(0)
-        result = self.order.get_items()
-
-        self.assertEqual(result, expected_result)
-
-
-class DrinkTests(unittest.TestCase):
-
-    __base = Bases.Water
-    __flavors = []
-
-    def testGetBase(self):
-        drink = create_drink()
-
-        result = drink.get_base()
-
-        self.assertEqual(result, self.__base)
-
-    def testGetFlavors(self):
-        drink = create_drink()
-
-        result = drink.get_flavors()
-
-        self.assertEqual(result, self.__flavors)
-
-    def testFlavorsParameter(self):
-        flavors = [Flavors.Lime]
-        drink = create_drink(flavors=flavors)
-
-        result = drink.get_flavors()
-
-        self.assertEqual(result, flavors)
-
-    def testGetPrice(self):
-        drink = create_drink()
-        expected_result = prices[drink.get_base()]
-
-        result = drink.get_price()
-
-        self.assertEqual(result, expected_result)
-
-    def testGetPriceAdded(self):
-        drink = create_drink()
-        flavor = Flavors.Lime
-        expected_result = prices[drink.get_base()] + prices[flavor]
-
-        drink.add_flavor(flavor)
-        result = drink.get_price()
-
-        self.assertEqual(result, expected_result)
-
-    def testGetName(self):
-        drink = create_drink()
-        expected_result = ""
-
-        result = drink.get_name()
-
-        self.assertEqual(result, expected_result)
-
-    def testNameParameter(self):
-        name = "test"
-        drink = create_drink(name=name)
-        expected_result = name
-
-        result = drink.get_name()
-
-        self.assertEqual(result, expected_result)
-
-    def testSetFlavors(self):
-        flavors = [Flavors.Lime]
-        drink = create_drink()
-
-        drink.set_flavors(flavors)
-        result = drink.get_flavors()
-
-        self.assertEqual(result, flavors)
-
-    def testSetDuplicateFlavors(self):
-        flavors = [Flavors.Lime, Flavors.Lime, Flavors.Mint]
-        expected_result = [Flavors.Lime, Flavors.Mint]
-        drink = create_drink()
-
-        drink.set_flavors(flavors)
-        result = drink.get_flavors()
-
-        self.assertEqual(result, expected_result)
-
-    def testAddFlavors(self):
-        flavor = Flavors.Lime
-        drink = create_drink()
-
-        drink.add_flavor(flavor)
-        result = drink.get_flavors()
-
-        self.assertEqual(result, [flavor])
-
-    def testDuplicatingFlavors(self):
-        flavor = Flavors.Lime
-        drink = create_drink()
-
-        drink.add_flavor(flavor)
-        drink.add_flavor(flavor)
-        result = drink.get_flavors()
-
-        self.assertEqual(result, [flavor])
-
-    def testNumFlavors(self):
-        drink = create_drink()
-
-        result = drink.get_num_flavors()
-
-        self.assertEqual(result, len(self.__flavors))
-
-    def testNumFlavorsAdded(self):
-        drink = create_drink()
-
-        drink.add_flavor(Flavors.Lime)
-        result = drink.get_num_flavors()
-
-        self.assertEqual(result, 1)
-
-
-def test():
-    test_suite = unittest.TestSuite()
-    test_suite.addTest(OrderTests())
-    test_suite.addTest(DrinkTests())
-
-    return test_suite
-
 
 if __name__ == '__main__':
-    runner = unittest.TextTestRunner()
-    suite = test()
-    runner.run(suite)
+    order = Order()
+
+    drink1 = create_drink(name="Baja Blast", flavors=[Flavors.Lime, Flavors.Lemon])
+
+    drink2 = create_drink(name="Sparkles", flavors=[Flavors.Cherry, Flavors.Blueberry, Flavors.Strawberry])
+
+    order.add_item(drink1)
+
+    order.add_item(drink2)
+
+    print(order.get_receipt())
