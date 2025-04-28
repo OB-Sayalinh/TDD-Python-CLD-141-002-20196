@@ -1,74 +1,7 @@
 import unittest
 
-from RefreshingAssignment import Bases, Flavors, Order, Drink, make_receipt, prices, create_drink
-
-# Testing
-
-
-class OrderTests(unittest.TestCase):
-
-    order = None
-
-    def setUp(self):
-        self.order = Order()
-
-    def testGetItems(self):
-        expected_result = []
-
-        result = self.order.get_items()
-
-        self.assertEqual(result, expected_result, msg="Expect Empty")
-
-    def testGetTotal(self):
-        expected_result = 0
-
-        result = self.order.get_total()
-
-        self.assertEqual(result, expected_result)
-
-    def testGetNumItems(self):
-        expected_result = 0
-
-        result = self.order.get_num_items()
-
-        self.assertEqual(result, expected_result)
-
-    def testGetReceipt(self):
-        expected_result = ""
-
-        result = self.order.get_receipt()
-
-        self.assertEqual(result, expected_result)
-
-    def testGetReceiptAdded(self):
-        drink = create_drink()
-        expected_result = make_receipt([drink])
-
-        self.order.add_item(drink)
-        result = self.order.get_receipt()
-
-        self.assertEqual(result, expected_result)
-
-    def testAddItem(self):
-        drink = create_drink()
-        expected_result = [drink]
-
-        self.order.add_item(drink)
-        result = self.order.get_items()
-
-        self.assertEqual(result, expected_result)
-
-    def testRemoveItem(self):
-        drink = create_drink()
-        expected_result = [drink]
-
-        self.order.add_item(drink)
-        self.order.add_item(drink)
-
-        self.order.remove_item(0)
-        result = self.order.get_items()
-
-        self.assertEqual(result, expected_result)
+from items import Bases, Flavors
+from testing import create_drink
 
 
 class DrinkTests(unittest.TestCase):
@@ -79,14 +12,14 @@ class DrinkTests(unittest.TestCase):
     def test_get_base(self):
         drink = create_drink()
 
-        result = drink.get_base()
+        result = drink.get_base
 
         self.assertEqual(result, self.__base)
 
     def test_get_flavors(self):
         drink = create_drink()
 
-        result = drink.get_flavors()
+        result = drink.get_flavors
 
         self.assertEqual(result, self.__flavors)
 
@@ -94,25 +27,25 @@ class DrinkTests(unittest.TestCase):
         flavors = [Flavors.Lime]
         drink = create_drink(flavors=flavors)
 
-        result = drink.get_flavors()
+        result = drink.get_flavors
 
         self.assertEqual(result, flavors)
 
     def test_get_price(self):
         drink = create_drink()
-        expected_result = prices[drink.get_base()]
+        expected_result = drink.get_base.get_price
 
-        result = drink.get_price()
+        result = drink.get_price
 
         self.assertEqual(result, expected_result)
 
     def test_get_price_added(self):
         drink = create_drink()
         flavor = Flavors.Lime
-        expected_result = prices[drink.get_base()] + prices[flavor]
+        expected_result = drink.get_base.get_price + flavor.get_price
 
         drink.add_flavor(flavor)
-        result = drink.get_price()
+        result = drink.get_price
 
         self.assertEqual(result, expected_result)
 
@@ -120,7 +53,7 @@ class DrinkTests(unittest.TestCase):
         drink = create_drink()
         expected_result = ""
 
-        result = drink.get_name()
+        result = drink.get_name
 
         self.assertEqual(result, expected_result)
 
@@ -129,7 +62,7 @@ class DrinkTests(unittest.TestCase):
         drink = create_drink(name=name)
         expected_result = name
 
-        result = drink.get_name()
+        result = drink.get_name
 
         self.assertEqual(result, expected_result)
 
@@ -138,7 +71,7 @@ class DrinkTests(unittest.TestCase):
         drink = create_drink()
 
         drink.set_flavors(flavors)
-        result = drink.get_flavors()
+        result = drink.get_flavors
 
         self.assertEqual(result, flavors)
 
@@ -148,7 +81,7 @@ class DrinkTests(unittest.TestCase):
         drink = create_drink()
 
         drink.set_flavors(flavors)
-        result = drink.get_flavors()
+        result = drink.get_flavors
 
         self.assertEqual(result, expected_result)
 
@@ -157,7 +90,7 @@ class DrinkTests(unittest.TestCase):
         drink = create_drink()
 
         drink.add_flavor(flavor)
-        result = drink.get_flavors()
+        result = drink.get_flavors
 
         self.assertEqual(result, [flavor])
 
@@ -167,14 +100,14 @@ class DrinkTests(unittest.TestCase):
 
         drink.add_flavor(flavor)
         drink.add_flavor(flavor)
-        result = drink.get_flavors()
+        result = drink.get_flavors
 
         self.assertEqual(result, [flavor])
 
     def test_num_flavors(self):
         drink = create_drink()
 
-        result = drink.get_num_flavors()
+        result = drink.get_num_flavors
 
         self.assertEqual(result, len(self.__flavors))
 
@@ -182,18 +115,16 @@ class DrinkTests(unittest.TestCase):
         drink = create_drink()
 
         drink.add_flavor(Flavors.Lime)
-        result = drink.get_num_flavors()
+        result = drink.get_num_flavors
 
         self.assertEqual(result, 1)
 
 
 def test():
     test_suite = unittest.TestSuite()
-    test_suite.addTest(OrderTests())
     test_suite.addTest(DrinkTests())
 
     return test_suite
-
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
