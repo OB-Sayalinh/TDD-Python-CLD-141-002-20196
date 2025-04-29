@@ -7,15 +7,16 @@ class Item(ABC):
 
     @abstractmethod
     def get_price(self):
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def get_name(self):
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def get_size(self):
-        pass
+        raise NotImplementedError()
+
 
 # Drinks
 
@@ -46,9 +47,12 @@ class DrinkSizes(BaseEnum):
 
 
 class Drink(Item):
-    """Create a beverage with a base and flavors"""
+    """Beverage with a base and flavors"""
+
+    __price_per_additional_flavor__ = 0.15
+
     def __init__(self, name, base, size):
-        """
+        """Create a beverage with a base and flavors
 
         Parameters
         ----------
@@ -75,22 +79,29 @@ class Drink(Item):
 
     @property
     def get_price(self):
-        super().get_price()
         price = self.__base__.get_price
+        count = 0
         for flavor in self.__flavors__:
             price += flavor.get_price
+            if count != 0:
+                price += self.add_flavor_price
+            count += 1
 
         price += self.__size__.get_price
         return price
 
     @property
     def get_name(self):
-        super().get_name()
         return self.__name
 
     @property
     def get_size(self):
         return self.__size__
+
+    @property
+    def add_flavor_price(self):
+        """Pricing for every additional flavor"""
+        return self.__price_per_additional_flavor__
 
     def set_flavors(self, flavors):
         """Set the flavors
@@ -114,3 +125,7 @@ class Drink(Item):
         """
         if not self.__flavors__.count(flavor):
             self.__flavors__.append(flavor)
+
+
+
+

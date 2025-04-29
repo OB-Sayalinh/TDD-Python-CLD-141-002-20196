@@ -14,6 +14,7 @@ def make_receipt(items):
         Formatted by name, flavors, and price
     """
     receipt = ""
+    price = 0
     for item in items:
         flavors = "- "
         for flavor in item.get_flavors:
@@ -22,17 +23,38 @@ def make_receipt(items):
         receipt += "{fname} {fflavors}: ${fprice}\n".format(fname=item.get_name,
                                                             fflavors=flavors,
                                                             fprice=item.get_price)
+        price += item.get_price
+
+    receipt += "Total: ${total}\n".format(total=price)
+    receipt += "Tax: {tax}\n".format(tax=tax*100)
+    receipt += "Final Total: ${final}\n".format(final=price*(tax+1))
+
     return receipt
 
-def find_price(items):
+def find_price(items, taxed=True):
+    """
+
+    Parameters
+    ----------
+    items : list of Item
+    taxed : bool, optional
+
+    Returns
+    -------
+    float
+    """
     price = 0
     for item in items:
         price += item.get_price()
-    return price * tax
+
+    if taxed:
+        price *= tax
+
+    return price
 
 
 class Order:
-
+    """Information on ordered items"""
     def __init__(self):
         self.__items__ = []
 
@@ -53,7 +75,26 @@ class Order:
         return make_receipt(self.__items__)
 
     def add_item(self, item):
+        """
+
+        Parameters
+        ----------
+        item : Item
+        """
         self.__items__.append(item)
 
     def remove_item(self, index):
+        """Pops item in the specified index
+
+        Parameters
+        ----------
+        index : int
+        """
         self.__items__.pop(index)
+
+
+
+
+
+
+

@@ -1,6 +1,6 @@
 """Creates Orders"""
 
-from testing import create_drink
+from test.testing import create_drink
 from items import Flavors
 from order import Order
 
@@ -15,4 +15,4 @@ if __name__ == '__main__':
 
     order.add_item(drink2)
 
-    print(order.get_receipt())
+    print(order.get_receipt)

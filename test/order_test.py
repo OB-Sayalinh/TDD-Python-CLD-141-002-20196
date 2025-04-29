@@ -1,7 +1,7 @@
 import unittest
 
-from order import Order, make_receipt
-from testing import create_drink
+from Project.order import Order, make_receipt
+from test.testing import create_drink
 
 
 class OrderTests(unittest.TestCase):
@@ -70,15 +70,20 @@ class OrderTests(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
 
-def test():
+tests = [OrderTests]
+
+
+def create_test():
     test_suite = unittest.TestSuite()
-    test_suite.addTest(OrderTests())
+
+    for test in tests:
+        test_suite.addTest(test())
 
     return test_suite
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
-    suite = test()
+    suite = create_test()
     runner.run(suite)
 
 

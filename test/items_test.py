@@ -1,7 +1,14 @@
 import unittest
 
-from items import Bases, Flavors
-from testing import create_drink
+from Project.items import Bases, Flavors, DrinkSizes, Item
+from test.testing import create_drink
+
+
+class ItemTests(unittest.TestCase):
+
+    def test_raise_abstraction_error(self):
+        with self.assertRaises(TypeError):
+            item = Item()
 
 
 class DrinkTests(unittest.TestCase):
@@ -14,7 +21,7 @@ class DrinkTests(unittest.TestCase):
 
         result = drink.get_base
 
-        self.assertEqual(result, self.__base)
+        self.assertEqual(result.value, self.__base.value)
 
     def test_get_flavors(self):
         drink = create_drink()
@@ -33,7 +40,7 @@ class DrinkTests(unittest.TestCase):
 
     def test_get_price(self):
         drink = create_drink()
-        expected_result = drink.get_base.get_price
+        expected_result = DrinkSizes.Small.get_price
 
         result = drink.get_price
 
@@ -42,9 +49,29 @@ class DrinkTests(unittest.TestCase):
     def test_get_price_added(self):
         drink = create_drink()
         flavor = Flavors.Lime
-        expected_result = drink.get_base.get_price + flavor.get_price
+        expected_result = DrinkSizes.Small.get_price
 
         drink.add_flavor(flavor)
+        result = drink.get_price
+
+        self.assertEqual(result, expected_result)
+
+    def test_get_price_multiple(self):
+        drink = create_drink()
+        flavors = [Flavors.Lime, Flavors.Mint]
+        expected_result = DrinkSizes.Small.get_price + drink.add_flavor_price
+
+        drink.set_flavors(flavors)
+        result = drink.get_price
+
+        self.assertEqual(result, expected_result)
+
+    def test_get_price_multiple2(self):
+        drink = create_drink()
+        flavors = [Flavors.Lime, Flavors.Mint, Flavors.Cherry, Flavors.Strawberry]
+        expected_result = DrinkSizes.Small.get_price + drink.add_flavor_price * 3
+
+        drink.set_flavors(flavors)
         result = drink.get_price
 
         self.assertEqual(result, expected_result)
@@ -120,14 +147,18 @@ class DrinkTests(unittest.TestCase):
         self.assertEqual(result, 1)
 
 
-def test():
+tests = [DrinkTests]
+
+def create_test():
     test_suite = unittest.TestSuite()
-    test_suite.addTest(DrinkTests())
+
+    for test in tests:
+        test_suite.addTest(test())
 
     return test_suite
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
-    suite = test()
+    suite = create_test()
     runner.run(suite)
 
