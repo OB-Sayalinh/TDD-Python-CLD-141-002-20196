@@ -1,6 +1,6 @@
 import unittest
 
-from Project.items import Bases, Flavors, DrinkSizes, Item
+from package.items import Bases, Flavors, DrinkSizes, Item
 from test.testing import create_drink
 
 

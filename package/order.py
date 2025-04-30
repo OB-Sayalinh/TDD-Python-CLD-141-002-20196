@@ -26,7 +26,7 @@ def make_receipt(items):
         price += item.get_price
 
     receipt += "Total: ${total}\n".format(total=price)
-    receipt += "Tax: {tax}\n".format(tax=tax*100)
+    receipt += "Tax: ${tax}\n".format(tax=tax*100)
     receipt += "Final Total: ${final}\n".format(final=price*(tax+1))
 
     return receipt

@@ -15,4 +15,6 @@ if __name__ == '__main__':
 
     order.add_item(drink2)
 
-    print(order.get_receipt)
+
+
+    print(drink1)

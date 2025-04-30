@@ -65,6 +65,14 @@ class Drink(Item):
         self.__name = name
         self.__size__ = size
 
+    def __repr__(self):
+
+        string = "(Drink) {name}; {base}; {flavors}; {size}".format(name=self.get_name,
+                                                                 base=self.get_base,
+                                                                 flavors=self.get_flavors,
+                                                                 size=self.get_size)
+        return string
+
     @property
     def get_base(self):
         return self.__base__

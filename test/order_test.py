@@ -1,11 +1,27 @@
 import unittest
 
-from Project.order import Order, make_receipt
+from package.order import Order, make_receipt
 from test.testing import create_drink
 
 
-class OrderTests(unittest.TestCase):
+# To-do: add tests that test erroneous edge cases (Errors, not returns)
+class MakeReceiptTests(unittest.TestCase):
+    """Testing the function make_receipt
 
+    Attributes
+    ----------
+    file_path : ./package/order
+    """
+
+
+
+class OrderTests(unittest.TestCase):
+    """Testing the class Order
+
+    Attributes
+    ----------
+    file_path : ./package/order
+    """
     order = None
 
     def setUp(self):
@@ -33,7 +49,7 @@ class OrderTests(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_get_receipt(self):
-        expected_result = ""
+        expected_result = make_receipt([])
 
         result = self.order.get_receipt
 

@@ -1,4 +1,4 @@
-import items
+import package.items as items
 import unittest
 
 def create_drink(name="", base=items.Bases.Water, flavors=None, size=items.DrinkSizes.Small):
