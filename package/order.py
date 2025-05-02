@@ -1,5 +1,7 @@
 from items import Item
-from basics import tax
+from basics import tax, RoundingMethod, RoundingFlags
+
+round_method = RoundingMethod(RoundingFlags.Fifths)
 
 def make_receipt(items):
     """Return the receipt of all items
@@ -25,13 +27,17 @@ def make_receipt(items):
                                                             fprice=item.get_price)
         price += item.get_price
 
+    price = find_price(items, taxed=False, as_string=True)
+
+    taxed_price = find_price(items, as_string=True)
+
     receipt += "Total: ${total}\n".format(total=price)
-    receipt += "Tax: ${tax}\n".format(tax=tax*100)
-    receipt += "Final Total: ${final}\n".format(final=price*(tax+1))
+    receipt += "Tax: {tax}%\n".format(tax=round(tax * 100, 2))
+    receipt += "Final Total: ${final}\n".format(final=taxed_price)
 
     return receipt
 
-def find_price(items, taxed=True):
+def find_price(items, taxed=True, as_string=False):
     """
 
     Parameters
@@ -41,14 +47,20 @@ def find_price(items, taxed=True):
 
     Returns
     -------
-    float
+    float : if as_string is False
+    string : if as_string is True
     """
     price = 0
     for item in items:
-        price += item.get_price()
+        price += item.get_price
 
     if taxed:
-        price *= tax
+        price *= tax + 1
+
+    price = round_method.round(price)
+
+    if not as_string:
+        price = float(price)
 
     return price
 

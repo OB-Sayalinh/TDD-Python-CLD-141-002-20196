@@ -10,7 +10,7 @@ class MakeReceiptTests(unittest.TestCase):
 
     Attributes
     ----------
-    file_path : ./package/order
+    file_path : ./package/order.py
     """
 
 
