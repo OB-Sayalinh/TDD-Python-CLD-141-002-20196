@@ -76,7 +76,7 @@ class RoundingFlags(Flag):
     Fifths = auto()
     Tenths = auto()
 
-    def do_round(self, num, trailing_count=2, trailing_zeros=True, dollar_sign=False):
+    def do_round(self, num, trailing_count=2, trailing_zeros=True, dollar_sign=False, no_negatives=True):
         """Round given number with flags
 
         Parameters
@@ -86,6 +86,7 @@ class RoundingFlags(Flag):
         trailing_count : int , optional
             Amount of trailing zeroes to add
         dollar_sign : bool, optional
+        no_negatives : bool, optional
 
         Returns
         -------
@@ -93,11 +94,10 @@ class RoundingFlags(Flag):
         """
 
         rounded_num = num
-        rounded_str = ""
 
         dec_places = 2
 
-        return_string = ''
+        # Rounding
 
         if self.value ^ self.NoRound.value:
 
@@ -139,25 +139,49 @@ class RoundingFlags(Flag):
             dec_places = 0
             return_string = str(num)
 
-        return_string = str(rounded_num)
+        # Text Formatting
+
+        add_negative = False
+
+        # Keep info on negative
+
+        if self.value & self.NoRound.value:
+            pass
+        elif no_negatives:
+            if rounded_num < 0:
+                rounded_num = 0.0
+        else:
+            if rounded_num < 0:
+                add_negative = True
+
+        return_string = str(rounded_num).replace('-', '')
+
+        # Add trailing zeroes
 
         if trailing_zeros and self.value ^ self.NoRound.value and trailing_count >= 0:
 
             decimal_num = get_decimals(rounded_num)
 
-            str_rounded_num = str(decimal_num)
+            str_rounded_dec = str(decimal_num)
 
-            difference = trailing_count - len(str_rounded_num)
+            difference = trailing_count - len(str_rounded_dec)
 
             if difference != 0:
                 if difference > 0:
-                    return_string = str(rounded_num)
+                    return_string = return_string
                     for x in range(difference):
                         return_string = ''.join([return_string, "0"])
                 else:
-                    return_string = str(rounded_num)[:difference - 1]
-        elif not self.value & self.NoRound.value:
+                    return_string = ''.join(return_string[:difference])
+
+            if len(return_string.split('.')[1]) == 0:
+                return_string = return_string.split('.')[0]
+        # Return whole number if no trailing zeroes are to be added
+        elif not self.value & self.NoRound.value and not trailing_zeros:
             return_string = return_string.split('.')[0]
+
+        if add_negative:
+            return_string = ''.join(['-',return_string])
 
         if dollar_sign:
             return ''.join(['$', return_string])
@@ -173,24 +197,26 @@ class RoundingMethod:
     Still uses RoundingFlags to round but this will hold all the settings (arguments) when rounding.
 
     """
-    def __init__(self, rounding_flags, trailing_count=2, trailing_zeroes=True, dollar_sign=False):
+    def __init__(self, rounding_flags, trailing_count=2, trailing_zeroes=True, dollar_sign=False, no_negatives=False):
         """
 
         Parameters
         ----------
         rounding_flags : RoundingFlags
             Flags used to round.
-        trailing_count : int
+        trailing_count : int, optional
             Amount of trailing zeroes for decimals.
-        trailing_zeroes : bool
+        trailing_zeroes : bool, optional
             if zeroes should trail.
-        dollar_sign : bool
+        dollar_sign : bool, optional
             if dollar sign is to be added to the returned string for rounding.
+        no_negatives : bool, optional
         """
         self.__rounding_flags__ = rounding_flags
         self.__trailing_count__ = trailing_count
         self.__trailing_zeroes__ = trailing_zeroes
         self.__dollar_sign__ = dollar_sign
+        self.__no_negatives__ = no_negatives
 
     @property
     def get_rounding_flag(self) -> RoundingFlags:
@@ -207,6 +233,10 @@ class RoundingMethod:
     @property
     def get_dollar_sign(self) -> bool:
         return self.__dollar_sign__
+
+    @property
+    def get_no_negatives(self) -> bool:
+        return self.__no_negatives__
 
     def set_rounding_flags(self, flags):
         """
@@ -260,6 +290,19 @@ class RoundingMethod:
         """
         self.__dollar_sign__ = set_as
 
+    def set_no_negatives(self, set_as):
+        """
+
+        Parameters
+        ----------
+        set_as : bool
+
+        Returns
+        -------
+        None
+        """
+        self.__no_negatives__ = set_as
+
     def round(self, number) -> str:
         """Round using RoundingFlags property.
 
@@ -286,14 +329,14 @@ def get_decimals(number):
 
     Returns
     -------
-    int
+    str
     """
     str_num = str(number).split('.')
     length = len(str_num)
     if length != 2:
         return 0
     else:
-        return int(str_num[1])
+        return str_num[1]
 
 def floor(num, dec_places):
     """Flooring decimal numbers
@@ -378,7 +421,7 @@ def round_fifths(number, dec_places):
             rounded_num = 5
 
     # Replace last integer with 0
-    return_num = float(str(number)[:dec_places-len(decimal_num)] + "0")
+    return_num = float(str(number)[:dec_places-len(decimal_num)-1] + "0")
     rounded_num *= multiplier
     return_num += rounded_num
 

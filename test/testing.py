@@ -15,7 +15,7 @@ def create_drink(name="", base=items.Bases.Water, flavors=None, size=items.Drink
 
     Returns
     ----------
-    Drink
+    items.Drink
         Created drink
     """
     if flavors is None:
@@ -24,6 +24,27 @@ def create_drink(name="", base=items.Bases.Water, flavors=None, size=items.Drink
     drink.set_flavors(flavors)
     return drink
 
+def create_food(name="", food_choice=items.Foods.Hotdog, size=items.FoodSizes.Small, toppings=None):
+    """Create a drink
 
+    Parameters
+    ----------
+    name : string, optional
+        name of drink
+    size : items.DrinkSizes, optional
+    food_choice : items.Foods, optional
+    toppings :  list of Toppings, optional
+
+
+    Returns
+    ----------
+    items.Food
+        Created drink
+    """
+    if toppings is None:
+        toppings = []
+    drink = items.Food(name, size, food_choice)
+    drink.set_toppings(toppings)
+    return drink
 
 

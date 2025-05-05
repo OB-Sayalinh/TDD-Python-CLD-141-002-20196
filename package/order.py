@@ -1,7 +1,9 @@
-from items import Item
-from basics import tax, RoundingMethod, RoundingFlags
+from logging import fatal
 
-round_method = RoundingMethod(RoundingFlags.Fifths)
+from .items import Item
+from .basics import tax, RoundingMethod, RoundingFlags
+
+round_method = RoundingMethod(RoundingFlags.Ceil | RoundingFlags.Whole | RoundingFlags.NinetyNine)
 
 def make_receipt(items):
     """Return the receipt of all items
@@ -27,7 +29,7 @@ def make_receipt(items):
                                                             fprice=item.get_price)
         price += item.get_price
 
-    price = find_price(items, taxed=False, as_string=True)
+    price = find_price(items, taxed=False, as_string=True, b_round=False)
 
     taxed_price = find_price(items, as_string=True)
 
@@ -37,13 +39,15 @@ def make_receipt(items):
 
     return receipt
 
-def find_price(items, taxed=True, as_string=False):
+def find_price(items, taxed=True, as_string=False, b_round=True):
     """
 
     Parameters
     ----------
     items : list of Item
     taxed : bool, optional
+    as_string : bool, optional
+    b_round : bool, optional
 
     Returns
     -------
@@ -57,7 +61,9 @@ def find_price(items, taxed=True, as_string=False):
     if taxed:
         price *= tax + 1
 
-    price = round_method.round(price)
+    # Turns price to string
+    if b_round:
+        price = round_method.round(price)
 
     if not as_string:
         price = float(price)
@@ -76,7 +82,7 @@ class Order:
 
     @property
     def get_total(self):
-        return find_price(self.__items__)
+        return find_price(self.__items__, taxed=False)
 
     @property
     def get_num_items(self):

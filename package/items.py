@@ -1,4 +1,4 @@
-from basics import BaseEnum
+from .basics import BaseEnum
 from abc import ABC, abstractmethod
 
 
@@ -17,6 +17,13 @@ class Item(ABC):
     def get_size(self):
         raise NotImplementedError()
 
+    @abstractmethod
+    def set_name(self, name):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_size(self, size):
+        raise NotImplementedError()
 
 # Drinks
 
@@ -134,6 +141,23 @@ class Drink(Item):
         if not self.__flavors__.count(flavor):
             self.__flavors__.append(flavor)
 
+    def set_size(self, size):
+        """
+
+        Parameters
+        ----------
+        size : DrinkSizes
+        """
+        self.__size__ = size
+
+    def set_name(self, name):
+        """
+
+        Parameters
+        ----------
+        name : str
+        """
+        self.__name = name
 
 
 
