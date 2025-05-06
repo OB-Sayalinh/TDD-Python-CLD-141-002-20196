@@ -58,7 +58,7 @@ class RoundingFlagsTests(unittest.TestCase):
 
     def test_whole_round(self):
         test_input = 10.9076
-        flags = rf.Whole | rf.Round
+        flags = rf.Whole
         expected_result = "11"
 
         result = flags.do_round(test_input, trailing_count=0)
@@ -175,7 +175,9 @@ class RoundingMethodTests(unittest.TestCase):
 
     def create_rounding_method(self, rounding_flags=rf.NoRound, trailing_count=2,
                                trailing_zeroes=True, dollar_sign=False, no_negatives=True):
-        return RoundingMethod(rounding_flags, trailing_count, trailing_zeroes, dollar_sign, no_negatives)
+        return RoundingMethod(rounding_flags=rounding_flags, trailing_count=trailing_count,
+                              trailing_zeroes=trailing_zeroes, dollar_sign=dollar_sign,
+                              no_negatives=no_negatives)
 
     def test_get_rounding_flags(self):
         rounding_flags = rf.Round
@@ -209,7 +211,7 @@ class RoundingMethodTests(unittest.TestCase):
 
         self.assertEqual(expected_result, result)
 
-    def test_get_dollar_sign(self):
+    def test_get_no_negatives(self):
         no_negatives = False
         expected_result = no_negatives
 
@@ -257,7 +259,7 @@ class RoundingMethodTests(unittest.TestCase):
 
         self.assertEqual(expected_result, result)
 
-    def test_set_dollar_sign(self):
+    def test_set_no_negatives(self):
         no_negatives = False
         expected_result = no_negatives
 
@@ -268,6 +270,11 @@ class RoundingMethodTests(unittest.TestCase):
         self.assertEqual(expected_result, result)
 
     def test_round(self):
+        """
+        Notes
+        _____
+        RoundingFlagsTest has further in-depth testing of rounding
+        """
         rounding_flags = rf.Round
         num = 10.9079
         expected_result = '10.91'

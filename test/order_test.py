@@ -6,7 +6,7 @@ from test.testing import create_drink
 
 # To-do: add tests that test erroneous edge cases (Errors, not returns)
 class MakeReceiptTests(unittest.TestCase):
-    """Testing the function make_receipt
+    """Test the function make_receipt
 
     Attributes
     ----------
@@ -16,7 +16,7 @@ class MakeReceiptTests(unittest.TestCase):
 
 
 class OrderTests(unittest.TestCase):
-    """Testing the class Order
+    """Test the class Order
 
     Attributes
     ----------

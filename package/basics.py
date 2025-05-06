@@ -3,7 +3,16 @@ from enum import Enum, auto, Flag
 
 
 class BaseEnum(Enum):
-    """Hold Data for a price and a string name"""
+    """Hold Data for a price and a string name
+
+        Use Pascal case for Enum properties.
+
+        The string value for names should be the presented text, i.e. Coke and Rum.
+
+        Methods
+        ----------
+        get_price
+    """
     def __new__(cls, name, price=0):
         """
 
@@ -27,40 +36,53 @@ class BaseEnum(Enum):
 
 
 class RoundingFlags(Flag):
-    """Ways of rounding money.
-
-    Since this is base around money, all strings returned are rounded at to either a hundredth or whole number.
-
-    Must explicitly set flag for rounding type (Round, Ceil, Floor) or get '0'.
-
-    Any returned strings are at max a decimal place of a hundredth.
+    """Ways of rounding.
 
     Use the flags in conjunction to create specific ways of rounding.
 
-    Some flags clash so there is a non-set priority between them.
+    Some flags clash as there is a non-set priority between them.
 
     Be warned of weird effects of clashing flags.
+
+    Default Decimal Position is to a hundredth.
+
+    Default type of rounding if no rounding type is set is: Round.
 
     Attributes
     ----------
     NoRound : int
+        Skips Rounding Types & Additional Numbers.
         No rounding done.
     Round : int
+        Rounding Type
         Basic rounding done to the closest number.
     Ceil : int
+        Rounding Type
         Round Up.
     Floor : int
+        Rounding Type
         Round Down.
-    Whole : int
-        Rounded to nearest whole number.
-    NinetyNine : int
-        Sets ending to 99 (Floors to 99)
-    NinetyFive : int
-        Sets ending to 95 (Floors to 95)
     Fifths : int
-        Rounds to the nearest fifth in a hundredth (works with Whole).
+        Rounding Type
+        Rounds to the nearest fifth in a hundredth
+    Whole : int
+        Decimal Position
+        Rounded to nearest whole number.
     Tenths : int
-        Changes from hundredths to tenths (works with Whole; needs a rounding type)
+        Decimal Position
+        Changes from hundredths to tenths
+    Tens : int
+        Decimal Position
+        Changes from hundredths to tens
+    Hundreds : int
+        Decimal Position
+        Changes from hundredths to Hundreds
+    NinetyNine : int
+        Additional Number
+        Sets ending to 99 (Floors)
+    NinetyFive : int
+        Additional Number
+        Sets ending to 95 (Floors)
 
     Methods
     ----------
@@ -75,6 +97,8 @@ class RoundingFlags(Flag):
     NinetyFive = auto()
     Fifths = auto()
     Tenths = auto()
+    Tens = auto()
+    Hundreds = auto()
 
     def do_round(self, num, trailing_count=2, trailing_zeros=True, dollar_sign=False, no_negatives=True):
         """Round given number with flags
@@ -91,6 +115,54 @@ class RoundingFlags(Flag):
         Returns
         -------
         string
+
+        Examples
+        --------
+        >>> flags = RoundingFlags.Round
+        ... flags.do_round(10.2339)
+        10.23
+
+        >>> flags = RoundingFlags.Ceil
+        ... flags.do_round(10.2339)
+        10.24
+
+        Defaults to basic rounding when just rounding.
+
+        >>> flags = RoundingFlags.Whole
+        ... flags.do_round(10.499)
+        10
+
+        >>> flags = RoundingFlags.Floor | RoundingFlags.Whole
+        ... flags.do_round(10.7339)
+        11
+
+        Goes from $10 to $9 then adds 99 cents.
+
+        >>> flags = RoundingFlags.Round | RoundingFlags.NinetyNine
+        ... flags.do_round(10.2339)
+        9.99
+
+        When wanting to ceil the result of specific number flags like NinetyNine, you need the
+        rounding to be in the correct number place (in this case as a whole number).
+        EQ: Lower number place + 2 = number place to round to.
+
+        >>> flags = RoundingFlags.Ceil | RoundingFlags.Whole | RoundingFlags.NinetyFive
+        ... flags.do_round(10.2339)
+        10.95
+
+        >>> flags = RoundingFlags.Tenths
+        ... flags.do_round(10.2339)
+        10.2
+
+        >>> flags = RoundingFlags.Fifths
+        ... flags.do_round(10.2339)
+        10.25
+
+        Odd paring of flags.
+
+        >>> flags = RoundingFlags.Tenths | RoundingFlags.Whole
+        ... flags.do_round(10.2339)
+        1
         """
 
         rounded_num = num
@@ -105,6 +177,10 @@ class RoundingFlags(Flag):
                 dec_places = 0
             elif self.value & self.Tenths.value:
                 dec_places = 1
+            elif self.value & self.Tens.value:
+                dec_places = -1
+            elif self.value & self.Hundreds.value:
+                dec_places = -2
 
             if self.value & self.Round.value:
                 rounded_num = round(num, dec_places)
@@ -112,9 +188,9 @@ class RoundingFlags(Flag):
                 rounded_num = ceil(num, dec_places)
             elif self.value & self.Floor.value:
                 rounded_num = floor(num, dec_places)
+            else:
+                rounded_num = round(num, dec_places)
 
-            if (self.value & self.Tenths.value) and (self.value & self.Whole.value):
-                rounded_num = round_to_multiple(rounded_num, 10)
             if self.value & self.Fifths.value:
                 rounded_num = round_fifths(rounded_num, dec_places)
 
@@ -432,5 +508,8 @@ def round_to_multiple(number, multiple):
     return multiple * round(number / multiple)
 
 tax = 0.0725
+
+
+
 
 

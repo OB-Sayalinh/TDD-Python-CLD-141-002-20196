@@ -31,7 +31,7 @@ def create_food(name="", food_choice=items.Foods.Hotdog, size=items.FoodSizes.Sm
     ----------
     name : string, optional
         name of drink
-    size : items.DrinkSizes, optional
+    size : items.FoodSizes, optional
     food_choice : items.Foods, optional
     toppings :  list of Toppings, optional
 
@@ -39,7 +39,7 @@ def create_food(name="", food_choice=items.Foods.Hotdog, size=items.FoodSizes.Sm
     Returns
     ----------
     items.Food
-        Created drink
+        Created Food object
     """
     if toppings is None:
         toppings = []
