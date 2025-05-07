@@ -100,7 +100,8 @@ class RoundingFlags(Flag):
     Tens = auto()
     Hundreds = auto()
 
-    def do_round(self, num, trailing_count=2, trailing_zeros=True, dollar_sign=False, no_negatives=True):
+    def do_round(self, num, trailing_count=2, trailing_zeros=True,
+                 dollar_sign=False, no_negatives=True, additional_num_places=2):
         """Round given number with flags
 
         Parameters
@@ -111,6 +112,8 @@ class RoundingFlags(Flag):
             Amount of trailing zeroes to add
         dollar_sign : bool, optional
         no_negatives : bool, optional
+        additional_num_places : int, default 2
+            The decimal place to add additional numbers
 
         Returns
         -------
@@ -173,6 +176,8 @@ class RoundingFlags(Flag):
 
         if self.value ^ self.NoRound.value:
 
+            # Set Decimal Places
+
             if self.value & self.Whole.value:
                 dec_places = 0
             elif self.value & self.Tenths.value:
@@ -182,25 +187,26 @@ class RoundingFlags(Flag):
             elif self.value & self.Hundreds.value:
                 dec_places = -2
 
+            # Apply Rounding Types
+
             if self.value & self.Round.value:
                 rounded_num = round(num, dec_places)
             elif self.value & self.Ceil.value:
                 rounded_num = ceil(num, dec_places)
             elif self.value & self.Floor.value:
                 rounded_num = floor(num, dec_places)
+            elif self.value & self.Fifths.value:
+                rounded_num = round_fifths(num, dec_places)
             else:
                 rounded_num = round(num, dec_places)
 
-            if self.value & self.Fifths.value:
-                rounded_num = round_fifths(rounded_num, dec_places)
-
-
+            # Add Additional Numbers
 
             if (self.value & self.NinetyNine.value) or (self.value & self.NinetyFive.value):
 
-                rounded_num = floor(rounded_num - 1, 0)
+                rounded_num = floor(rounded_num - 1, additional_num_places - 2)
 
-                multiplier = 10 ** (-2)
+                multiplier = 10 ** (-additional_num_places )
 
                 additive = 0
 
@@ -501,7 +507,7 @@ def round_fifths(number, dec_places):
     rounded_num *= multiplier
     return_num += rounded_num
 
-    return return_num
+    return round(return_num, dec_places)
 
 def round_to_multiple(number, multiple):
     """For rounding non-decimals with multiples"""

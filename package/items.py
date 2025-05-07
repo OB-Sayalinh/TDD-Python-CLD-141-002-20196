@@ -1,4 +1,4 @@
-from .basics import BaseEnum
+from basics import BaseEnum
 from abc import ABC, abstractmethod
 
 
@@ -75,10 +75,12 @@ class Drink(Item):
 
     def __repr__(self):
 
-        string = "(Drink) {name}; {base}; {flavors}; {size}".format(name=self.get_name,
-                                                                 base=self.get_base,
-                                                                 flavors=self.get_flavors,
-                                                                 size=self.get_size)
+        string = "(Drink) {name}; {base}; {flavors}; {size}; {price}".format(name=self.get_name,
+                                                                base=self.get_base,
+                                                                flavors=self.get_flavors,
+                                                                size=self.get_size,
+                                                                price=self.get_price
+                                                                )
         return string
 
     @property
@@ -212,10 +214,11 @@ class Food(Item):
 
     def __repr__(self):
 
-        string = "(Food) {name}; {food_choice}; {toppings}; {size}".format(name=self.get_name,
-                                                                 food_choice=self.__food_choice__,
-                                                                 toppings=self.__toppings__,
-                                                                 size=self.get_size)
+        string = "(Food) {name}; {food_choice}; {toppings}; {size}; {price}".format(name=self.get_name,
+                                                                food_choice=self.get_food_choice,
+                                                                toppings=self.get_toppings,
+                                                                size=self.get_size,
+                                                                price=self.get_price)
         return string
 
     @property

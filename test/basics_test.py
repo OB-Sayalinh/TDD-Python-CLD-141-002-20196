@@ -139,7 +139,7 @@ class RoundingFlagsTests(unittest.TestCase):
 
     def test_tenths(self):
         test_input = 10.9076
-        flags = rf.Tenths | rf.Round
+        flags = rf.Tenths
         expected_result = "10.9"
 
         result = flags.do_round(test_input, trailing_count=1)
@@ -159,6 +159,24 @@ class RoundingFlagsTests(unittest.TestCase):
         test_input = 10.9016
         flags = rf.Floor | rf.Whole | rf.NinetyNine
         expected_result = "9.99"
+
+        result = flags.do_round(test_input)
+
+        self.assertEqual(result, expected_result)
+
+    def test_tens(self):
+        test_input = 13.9076
+        flags = rf.Tens
+        expected_result = "10.00"
+
+        result = flags.do_round(test_input)
+
+        self.assertEqual(result, expected_result)
+
+    def test_hundreds(self):
+        test_input = 256.9076
+        flags = rf.Hundreds
+        expected_result = "300.00"
 
         result = flags.do_round(test_input)
 
