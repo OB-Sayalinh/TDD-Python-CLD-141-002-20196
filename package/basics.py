@@ -99,20 +99,21 @@ class RoundingFlags(Flag):
     Tenths = auto()
     Tens = auto()
     Hundreds = auto()
+    Negatives = auto()
+    NoTrailingZeros = auto()
+    Signed = auto()
 
-    def do_round(self, num, trailing_count=2, trailing_zeros=True,
-                 dollar_sign=False, no_negatives=True, additional_num_places=2):
+
+    def do_round(self, num, trailing_count=2, add_num_place=2):
         """Round given number with flags
 
         Parameters
         ----------
         num : float
-        trailing_zeros : bool, optional
+            Number to Round
         trailing_count : int , optional
             Amount of trailing zeroes to add
-        dollar_sign : bool, optional
-        no_negatives : bool, optional
-        additional_num_places : int, default 2
+        add_num_place : int, default 2
             The decimal place to add additional numbers
 
         Returns
@@ -168,13 +169,24 @@ class RoundingFlags(Flag):
         1
         """
 
+        trailing_zeros = True
+        negatives = False
+        signed = False
+
+        if self.value & self.NoTrailingZeros.value:
+            trailing_zeros = False
+        if self.value & self.Negatives.value:
+            negatives = True
+        if self.value & self.Signed.value:
+            signed = True
+
         rounded_num = num
 
         dec_places = 2
 
-        # Rounding
+        # Rounding & Additional Numbers
 
-        if self.value ^ self.NoRound.value:
+        if not (self.value & self.NoRound.value):
 
             # Set Decimal Places
 
@@ -204,9 +216,16 @@ class RoundingFlags(Flag):
 
             if (self.value & self.NinetyNine.value) or (self.value & self.NinetyFive.value):
 
-                rounded_num = floor(rounded_num - 1, additional_num_places - 2)
+                # Not the same as dec_places
+                dec_place = add_num_place - 2
 
-                multiplier = 10 ** (-additional_num_places )
+                tens = 10 ** (-dec_place)
+
+                use_num = rounded_num - tens
+
+                rounded_num = floor(use_num, dec_place)
+
+                multiplier = 10 ** (-add_num_place)
 
                 additive = 0
 
@@ -229,7 +248,7 @@ class RoundingFlags(Flag):
 
         if self.value & self.NoRound.value:
             pass
-        elif no_negatives:
+        elif not negatives:
             if rounded_num < 0:
                 rounded_num = 0.0
         else:
@@ -240,7 +259,7 @@ class RoundingFlags(Flag):
 
         # Add trailing zeroes
 
-        if trailing_zeros and self.value ^ self.NoRound.value and trailing_count >= 0:
+        if trailing_zeros and not (self.value & self.NoRound.value) and trailing_count >= 0:
 
             decimal_num = get_decimals(rounded_num)
 
@@ -265,7 +284,7 @@ class RoundingFlags(Flag):
         if add_negative:
             return_string = ''.join(['-',return_string])
 
-        if dollar_sign:
+        if signed:
             return ''.join(['$', return_string])
         else:
             return return_string
@@ -279,46 +298,33 @@ class RoundingMethod:
     Still uses RoundingFlags to round but this will hold all the settings (arguments) when rounding.
 
     """
-    def __init__(self, rounding_flags, trailing_count=2, trailing_zeroes=True, dollar_sign=False, no_negatives=False):
+    def __init__(self, rounding_flags, trailing_count=2, add_num_place=2):
         """
 
         Parameters
         ----------
         rounding_flags : RoundingFlags
             Flags used to round.
-        trailing_count : int, optional
+        trailing_count : int, default 2
             Amount of trailing zeroes for decimals.
-        trailing_zeroes : bool, optional
-            if zeroes should trail.
-        dollar_sign : bool, optional
-            if dollar sign is to be added to the returned string for rounding.
-        no_negatives : bool, optional
+        add_num_place : int, default 2
+            Decimal place for added on numbers
         """
         self.__rounding_flags__ = rounding_flags
         self.__trailing_count__ = trailing_count
-        self.__trailing_zeroes__ = trailing_zeroes
-        self.__dollar_sign__ = dollar_sign
-        self.__no_negatives__ = no_negatives
+        self.__add_num_place__ = add_num_place
 
     @property
     def get_rounding_flag(self) -> RoundingFlags:
         return self.__rounding_flags__
 
     @property
-    def get_trailing_zeroes(self) -> bool:
-        return self.__trailing_zeroes__
+    def get_add_num_place(self) -> int:
+        return self.__add_num_place__
 
     @property
     def get_trailing_count(self) -> int:
         return self.__trailing_count__
-
-    @property
-    def get_dollar_sign(self) -> bool:
-        return self.__dollar_sign__
-
-    @property
-    def get_no_negatives(self) -> bool:
-        return self.__no_negatives__
 
     def set_rounding_flags(self, flags):
         """
@@ -333,18 +339,18 @@ class RoundingMethod:
         """
         self.__rounding_flags__ = flags
 
-    def set_trailing_zeroes(self, zeroes):
+    def set_add_num_place(self, dec_place):
         """
 
         Parameters
         ----------
-        zeroes : bool
+        dec_place : int
 
         Returns
         -------
         None
         """
-        self.__trailing_zeroes__ = zeroes
+        self.__add_num_place__ = dec_place
 
     def set_trailing_count(self, count):
         """
@@ -358,32 +364,6 @@ class RoundingMethod:
         None
         """
         self.__trailing_count__ = count
-
-    def set_dollar_sign(self, set_as):
-        """
-
-        Parameters
-        ----------
-        set_as : bool
-
-        Returns
-        -------
-        None
-        """
-        self.__dollar_sign__ = set_as
-
-    def set_no_negatives(self, set_as):
-        """
-
-        Parameters
-        ----------
-        set_as : bool
-
-        Returns
-        -------
-        None
-        """
-        self.__no_negatives__ = set_as
 
     def round(self, number) -> str:
         """Round using RoundingFlags property.
@@ -399,7 +379,7 @@ class RoundingMethod:
         str
         """
         return self.get_rounding_flag.do_round(number, self.get_trailing_count,
-                                               self.get_trailing_zeroes, self.get_dollar_sign)
+                                               self.get_add_num_place)
 
 
 def get_decimals(number):

@@ -1,4 +1,4 @@
-from basics import BaseEnum
+from package.basics import BaseEnum
 from abc import ABC, abstractmethod
 
 

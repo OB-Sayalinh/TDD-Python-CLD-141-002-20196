@@ -20,12 +20,21 @@ class RoundingFlagsTests(unittest.TestCase):
 
         self.assertEqual(result, expected_result)
 
-    def test_no_round_sign(self):
+    def test_no_round_signed(self):
         test_input = 10.9076
-        flags = rf.NoRound
+        flags = rf.NoRound | rf.Signed
         expected_result = ''.join(['$', str(test_input)])
 
-        result = flags.do_round(test_input, dollar_sign=True)
+        result = flags.do_round(test_input)
+
+        self.assertEqual(result, expected_result)
+
+    def test_signed(self):
+        test_input = 10.9076
+        flags = rf.Signed
+        expected_result = '$10.91'
+
+        result = flags.do_round(test_input)
 
         self.assertEqual(result, expected_result)
 
@@ -83,7 +92,7 @@ class RoundingFlagsTests(unittest.TestCase):
 
         self.assertEqual(result, expected_result)
 
-    def test_no_negatives_true(self):
+    def test_negatives_false(self):
         test_input = -1.0
         flags = rf.Round
         expected_result = "0.00"
@@ -92,7 +101,7 @@ class RoundingFlagsTests(unittest.TestCase):
 
         self.assertEqual(result, expected_result)
 
-    def test_no_negatives_true2(self):
+    def test_negatives_false2(self):
         test_input = 0.0
         flags = rf.Round
         expected_result = "0.00"
@@ -101,12 +110,12 @@ class RoundingFlagsTests(unittest.TestCase):
 
         self.assertEqual(result, expected_result)
 
-    def test_no_negatives_false(self):
+    def test_negatives_true(self):
         test_input = -1.0589
-        flags = rf.Round
+        flags = rf.Round | rf.Negatives
         expected_result = "-1.06"
 
-        result = flags.do_round(test_input, trailing_count=2,no_negatives=False)
+        result = flags.do_round(test_input)
 
         self.assertEqual(result, expected_result)
 
@@ -182,6 +191,33 @@ class RoundingFlagsTests(unittest.TestCase):
 
         self.assertEqual(result, expected_result)
 
+    def test_add_num_places(self):
+        test_input = 256.9076
+        flags = rf.NinetyNine
+        expected_result = "199.00"
+
+        result = flags.do_round(test_input, add_num_place=0)
+
+        self.assertEqual(expected_result, result)
+
+    def test_add_num_places2(self):
+        test_input = 256.9076
+        flags = rf.NinetyNine
+        expected_result = "249.90"
+
+        result = flags.do_round(test_input, add_num_place=1)
+
+        self.assertEqual(expected_result, result)
+
+    def test_add_num_places3(self):
+        test_input = 7256.9076
+        flags = rf.NinetyNine
+        expected_result = "6990.00"
+
+        result = flags.do_round(test_input, add_num_place=-1)
+
+        self.assertEqual(expected_result, result)
+
 
 class RoundingMethodTests(unittest.TestCase):
     """Test RoundingMethod Class
@@ -192,10 +228,9 @@ class RoundingMethodTests(unittest.TestCase):
     """
 
     def create_rounding_method(self, rounding_flags=rf.NoRound, trailing_count=2,
-                               trailing_zeroes=True, dollar_sign=False, no_negatives=True):
+                               add_num_place=2):
         return RoundingMethod(rounding_flags=rounding_flags, trailing_count=trailing_count,
-                              trailing_zeroes=trailing_zeroes, dollar_sign=dollar_sign,
-                              no_negatives=no_negatives)
+                              add_num_place=add_num_place)
 
     def test_get_rounding_flags(self):
         rounding_flags = rf.Round
@@ -213,27 +248,12 @@ class RoundingMethodTests(unittest.TestCase):
 
         self.assertEqual(expected_result, result)
 
-    def test_get_trailing_zeroes(self):
-        trailing_zeroes = False
-        expected_result = trailing_zeroes
+    def test_get_add_num_place(self):
+        dec_places = 2
+        expected_result = dec_places
 
-        result = self.create_rounding_method(trailing_zeroes=trailing_zeroes).get_trailing_zeroes
-
-        self.assertEqual(expected_result, result)
-
-    def test_get_dollar_sign(self):
-        dollar_sign = True
-        expected_result = dollar_sign
-
-        result = self.create_rounding_method(dollar_sign=dollar_sign).get_dollar_sign
-
-        self.assertEqual(expected_result, result)
-
-    def test_get_no_negatives(self):
-        no_negatives = False
-        expected_result = no_negatives
-
-        result = self.create_rounding_method(no_negatives=no_negatives).get_no_negatives
+        rounder = self.create_rounding_method(add_num_place=dec_places)
+        result = rounder.get_add_num_place
 
         self.assertEqual(expected_result, result)
 
@@ -257,33 +277,13 @@ class RoundingMethodTests(unittest.TestCase):
 
         self.assertEqual(expected_result, result)
 
-    def test_set_trailing_zeroes(self):
-        trailing_zeroes = False
-        expected_result = trailing_zeroes
+    def test_set_add_num_place(self):
+        dec_place = False
+        expected_result = dec_place
 
         method = self.create_rounding_method()
-        method.set_trailing_zeroes(trailing_zeroes)
-        result = method.get_trailing_zeroes
-
-        self.assertEqual(expected_result, result)
-
-    def test_set_dollar_sign(self):
-        dollar_sign = True
-        expected_result = dollar_sign
-
-        method = self.create_rounding_method()
-        method.set_dollar_sign(dollar_sign)
-        result = method.get_dollar_sign
-
-        self.assertEqual(expected_result, result)
-
-    def test_set_no_negatives(self):
-        no_negatives = False
-        expected_result = no_negatives
-
-        method = self.create_rounding_method()
-        method.set_no_negatives(no_negatives)
-        result = method.get_no_negatives
+        method.set_add_num_place(dec_place)
+        result = method.get_add_num_place
 
         self.assertEqual(expected_result, result)
 
