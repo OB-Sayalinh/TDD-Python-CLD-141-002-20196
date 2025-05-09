@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="http://127.0.0.1:5000/item" method="post">
+        <select name="type" id="select_type">
+            <option selected value="Drink">Drink</option>
+            <option value="Food">Food</option>
+        </select>
+        <div hidden="true">
+            <label for="class">Class:</label>
+            <input name="class" id="class" value="Drink" />
+        </div>
+        <div>
+            <label for="name">Name:</label>
+            <input name="name" id="name" value="Name" />
+        </div>
+        <div>
+            <label for="size">Size:</label>
+            <input name="size" id="size" value="Small" />
+        </div>
+        <div id="base">
+            <label for="base" id="base">Base:</label>
+            <input name="base" id="base" value="Water" />
+        </div>
+        <div id="food_choice">
+            <label for="food_choice" id="food_choice">Food of Choice:</label>
+            <select name="" id="select_food_choice">
+                <option selected value="Chili">Chili</option>
+                <option value="Mustard">Mustard</option>
+            </select>
+            <input type="" name="food_choice" id="food_choice" value="Hotdog" />
+        </div>
+        <table><tbody>
+            <tr id="flavors_body">
+                <td><label for="flavors">Flavors:</label></td>
+                <td><input type="text" name="flavors[]" id="flavors" value="Cherry" /></td>
+                <td><input type="text" name="flavors[]" value="Strawberry" style="max-width: 80px;"></td>
+            </tr>
+            <tr id="toppings_body">
+                <td><label for="toppings">Toppings:</label></td>
+                <td><input type="text" name="toppings[]" id="toppings" value="Chili" /></td>
+                <td><input type="text" name="toppings[]" value="Mustard" style="max-width: 80px;"></td>
+            </tr>
+        </table></tbody>
+
+        </div>
+            <button>Create New Item</button>
+        </div>
+    </form>
+</body>
+
+<script src="index.js"></script>
+
+</html>
