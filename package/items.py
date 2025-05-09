@@ -129,6 +129,8 @@ class Drink(Item):
         flavors : list of Flavors
         """
         temp_flavors = []
+        if not type(flavors) is list:
+            raise TypeError()
         for flavor in flavors:
             if not temp_flavors.count(flavor):
                 temp_flavors.append(flavor)
