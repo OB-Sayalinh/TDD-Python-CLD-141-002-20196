@@ -1,5 +1,6 @@
 import math
 from enum import Enum, auto, Flag
+from abc import ABC, abstractmethod
 
 
 class BaseEnum(Enum):
@@ -33,6 +34,9 @@ class BaseEnum(Enum):
     @property
     def get_price(self):
         return self._price_
+
+
+# Rounding
 
 
 class RoundingFlags(Flag):
@@ -492,6 +496,31 @@ def round_fifths(number, dec_places):
 def round_to_multiple(number, multiple):
     """For rounding non-decimals with multiples"""
     return multiple * round(number / multiple)
+
+
+# Base Item Class
+class Item(ABC):
+
+    @abstractmethod
+    def get_price(self):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_name(self):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_size(self):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_name(self, name):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set_size(self, size):
+        raise NotImplementedError()
+
 
 tax = 0.0725
 

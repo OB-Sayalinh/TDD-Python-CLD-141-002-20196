@@ -1,8 +1,6 @@
-from logging import fatal
-
-from items import Item
-from basics import tax, RoundingMethod, RoundingFlags
-from package.items import Drink, Food
+from basics import tax, RoundingMethod, RoundingFlags, Item
+from package.food import Food
+from package.drink import Drink
 
 untaxed_rounding = RoundingMethod(RoundingFlags.Ceil | RoundingFlags.Whole | RoundingFlags.NinetyNine)
 taxed_rounding = RoundingMethod(RoundingFlags.Fifths)

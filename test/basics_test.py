@@ -1,7 +1,7 @@
 import unittest
 
 from package.basics import RoundingFlags as rf
-from package.basics import RoundingMethod
+from package.basics import RoundingMethod, Item
 
 
 class RoundingFlagsTests(unittest.TestCase):
@@ -301,6 +301,20 @@ class RoundingMethodTests(unittest.TestCase):
         result = method.round(num)
 
         self.assertEqual(expected_result, result)
+
+
+class ItemTests(unittest.TestCase):
+    """Test the abstract class Item
+
+    Only one test and that is to raise an error.
+
+    Attributes
+    ----------
+    file_path : ./package/basic.py
+    """
+    def test_raise_type_error(self):
+        with self.assertRaises(TypeError):
+            item = Item()
 
 
 tests = [RoundingFlagsTests, RoundingMethodTests]

@@ -1,7 +1,9 @@
-import package.items as items
-import unittest
+from package.drink import Bases, DrinkSizes, Drink, Flavors
+from package.food import Food, FoodSizes, Foods
+from package.ice_cream import IceCream, IceCreamSizes, Additionals
+from package.ice_cream import Flavors as ICFlavors
 
-def create_drink(name="", base=items.Bases.Water, flavors=None, size=items.DrinkSizes.Small):
+def create_drink(name="", base=Bases.Water, flavors=None, size=DrinkSizes.Small):
     """Create a drink
 
     Parameters
@@ -20,17 +22,17 @@ def create_drink(name="", base=items.Bases.Water, flavors=None, size=items.Drink
     """
     if flavors is None:
         flavors = []
-    drink = items.Drink(name, base, size)
+    drink = Drink(name, base, size)
     drink.set_flavors(flavors)
     return drink
 
-def create_food(name="", food_choice=items.Foods.Hotdog, size=items.FoodSizes.Small, toppings=None):
-    """Create a drink
+def create_food(name="", food_choice=Foods.Hotdog, size=FoodSizes.Small, toppings=None):
+    """Create a food
 
     Parameters
     ----------
     name : string, optional
-        name of drink
+        name of food
     size : items.FoodSizes, optional
     food_choice : items.Foods, optional
     toppings :  list of Toppings, optional
@@ -43,8 +45,34 @@ def create_food(name="", food_choice=items.Foods.Hotdog, size=items.FoodSizes.Sm
     """
     if toppings is None:
         toppings = []
-    drink = items.Food(name, size, food_choice)
-    drink.set_toppings(toppings)
-    return drink
+    food = Food(name, size, food_choice)
+    food.set_toppings(toppings)
+    return food
+
+def create_ice_cream(name="", size=IceCreamSizes.Scoop, flavors=None, additionals=None):
+    """Create an ice cream
+
+    Parameters
+    ----------
+    name : string, default ""
+        name of ice cream
+    size : IceCreamSizes, default IceCreamSizes.Scoop
+    flavors : list of ICFlavors, default [ICFlavors.Banana]
+    additionals :  list of Additionals, optional
+
+
+    Returns
+    ----------
+    items.Food
+        Created Food object
+    """
+    if flavors is None:
+        flavors = []
+    if additionals is None:
+        additionals = []
+    ice_cream = IceCream(name, size, flavors)
+    ice_cream.set_additionals(additionals)
+    return ice_cream
+
 
 

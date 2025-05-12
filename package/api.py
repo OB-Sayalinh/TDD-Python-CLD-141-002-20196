@@ -1,8 +1,9 @@
 from flask import Flask, request
 from pydoc import locate
 import package.basics
-import package.items as IT
-from package.items import Bases
+import package.drink as drink
+import package.food as food
+from drink import Bases
 
 import sys
 

@@ -1,7 +1,8 @@
 """Create Orders"""
-from package.items import Toppings
+from package.food import Toppings
 from test.testing import create_drink, create_food
-from items import Flavors, Foods, Toppings
+from food import Foods, Toppings
+from drink import Flavors
 from order import Order
 
 if __name__ == '__main__':
