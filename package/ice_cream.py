@@ -23,11 +23,11 @@ class Additionals(BaseEnum):
 
 
 class IceCreamSizes(BaseEnum):
-    Scoop = "Scoop", 1, 1.25
-    DoubleScoop = "DoubleScoop", 2, 2.00
-    TripleScoop = "TripleScoop", 3, 3.00
-    QuadrupleScoop = "QuadrupleScoop", 4, 4.00
-    Sundae = "Sundae", 3, 3.50
+    Scoop = "Scoop", 1, 0.00
+    DoubleScoop = "Double Scoop", 2, 0.00
+    TripleScoop = "Triple Scoop", 3, 0.00
+    QuadrupleScoop = "Quadruple Scoop", 4, 0.00
+    Sundae = "Sundae", 3, 0.00
 
     def __new__(cls, name, max_scoops, price=0):
         """

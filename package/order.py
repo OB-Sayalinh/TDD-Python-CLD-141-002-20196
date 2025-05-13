@@ -1,6 +1,7 @@
 from basics import tax, RoundingMethod, RoundingFlags, Item
 from package.food import Food
 from package.drink import Drink
+from package.ice_cream import IceCream
 
 untaxed_rounding = RoundingMethod(RoundingFlags.Ceil | RoundingFlags.Whole | RoundingFlags.NinetyNine)
 taxed_rounding = RoundingMethod(RoundingFlags.Fifths)
@@ -29,8 +30,9 @@ def make_receipt(items):
                 flavors = ''.join([flavors, flavor.name, ', '])
             flavors = flavors[:-2]
             price = item_rounding.round(item.get_price)
-            add_str = ''.join([add_str, '{name} ({base}) {flavors}: ${price}' \
-                            .format(name=item.get_name,
+            add_str = ''.join([add_str, '{size} {name} ({base}) {flavors}: ${price}' \
+                            .format(size=item.get_size.value,
+                            name=item.get_name,
                             base = item.get_base.value,
                             flavors=flavors,
                             price=price)])
@@ -45,6 +47,22 @@ def make_receipt(items):
                             food_choice=item.get_food_choice.value,
                             toppings=toppings,
                             price=price)])
+        elif type(item) is IceCream:
+            flavors = ''
+            for flavor in item.get_flavors:
+                flavors = ''.join([flavors, flavor.name, ', '])
+            flavors = flavors[:-2]
+            additionals = ''
+            for additional in item.get_additionals:
+                additionals = ''.join([additionals, additional.name, ', '])
+            additionals = additionals[:-2]
+            price = item_rounding.round(item.get_price)
+            add_str = ''.join([add_str, '{size} {name} ({flavors}) {additionals}: ${price}' \
+                              .format(size=item.get_size.value,
+                                      name=item.get_name,
+                                      flavors=flavors,
+                                      additionals=additionals,
+                                      price=price)])
 
         receipt = ''.join([receipt, add_str])
 
