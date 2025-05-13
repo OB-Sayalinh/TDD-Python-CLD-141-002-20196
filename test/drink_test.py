@@ -102,6 +102,21 @@ class DrinkTests(unittest.TestCase):
 
         self.assertEqual(result, expected_result)
 
+    def test_get_num_flavors(self):
+        drink = create_drink()
+
+        result = drink.get_num_flavors
+
+        self.assertEqual(result, len(self.__flavors))
+
+    def test_get_num_flavors_added(self):
+        drink = create_drink()
+
+        drink.add_flavor(Flavors.Lime)
+        result = drink.get_num_flavors
+
+        self.assertEqual(result, 1)
+
     # Setters & Misc
 
     def test_set_name(self):
@@ -161,21 +176,6 @@ class DrinkTests(unittest.TestCase):
         result = drink.get_flavors
 
         self.assertEqual(result, [flavor])
-
-    def test_num_flavors(self):
-        drink = create_drink()
-
-        result = drink.get_num_flavors
-
-        self.assertEqual(result, len(self.__flavors))
-
-    def test_num_flavors_added(self):
-        drink = create_drink()
-
-        drink.add_flavor(Flavors.Lime)
-        result = drink.get_num_flavors
-
-        self.assertEqual(result, 1)
 
 
 tests = [DrinkTests]

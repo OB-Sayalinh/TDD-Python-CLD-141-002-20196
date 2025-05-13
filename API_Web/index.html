@@ -10,6 +10,7 @@
         <select name="type" id="select_type">
             <option selected value="Drink">Drink</option>
             <option value="Food">Food</option>
+            <option value="IceCream">Ice Storm</option>
         </select>
         <div hidden="true">
             <label for="class">Class:</label>
@@ -45,6 +46,16 @@
                 <td><label for="toppings">Toppings:</label></td>
                 <td><input type="text" name="toppings[]" id="toppings" value="Chili" /></td>
                 <td><input type="text" name="toppings[]" value="Mustard" style="max-width: 80px;"></td>
+            </tr>
+            <tr id="ic_flavors_body">
+                <td><label for="ic_flavors">Flavors:</label></td>
+                <td><input type="text" name="ic_flavors" id="ic_flavors" value="Chocolate" /></td>
+                <td><input type="text" name="ic_flavors" value="Banana" style="max-width: 80px;"></td>
+            </tr>
+            <tr id="additionals_body">
+                <td><label for="additionals">Addons or Mix-ins:</label></td>
+                <td><input type="text" name="additionals" id="additionals" value="Whipped Cream" /></td>
+                <td><input type="text" name="additionals" value="Cherry" style="max-width: 80px;"></td>
             </tr>
         </table></tbody>
 

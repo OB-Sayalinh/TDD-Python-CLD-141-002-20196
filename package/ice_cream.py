@@ -23,11 +23,25 @@ class Additionals(BaseEnum):
 
 
 class IceCreamSizes(BaseEnum):
+    """
+
+    Attributes
+    ----------
+    get_max_scoops
+    get_default_scoops
+        returns dictionary of scoop count to a size
+    """
     Scoop = "Scoop", 1, 0.00
     DoubleScoop = "Double Scoop", 2, 0.00
     TripleScoop = "Triple Scoop", 3, 0.00
     QuadrupleScoop = "Quadruple Scoop", 4, 0.00
+    PentaScoop = "Penta Scoop", 5, 0.00
+    SenaryScoop = "Senary Scoop", 6, 0.00
     Sundae = "Sundae", 3, 0.00
+
+    # def __init__(self, name, max_scoops, price=0):
+    #     super().__init__(name, max_scoops, price=0)
+    #
 
     def __new__(cls, name, max_scoops, price=0):
         """
@@ -45,13 +59,34 @@ class IceCreamSizes(BaseEnum):
         return member
 
     @property
-    def get_max_scoops(self):
+    def get_max_scoops(self) -> int:
         return self._max_scoops_
+
+    def get_default_scoops(self):
+        """Get Scoops to Default to
+
+        An amount of scoops up to 6 (including) has a default size.
+
+        A scoop of 0 defaults to the 1 option.
+
+        Returns
+        -------
+        dict of int : size
+        """
+        return {
+            0 : self.Scoop,
+            1 : self.Scoop,
+            2 : self.DoubleScoop,
+            3 : self.TripleScoop,
+            4 : self.QuadrupleScoop,
+            5 : self.PentaScoop,
+            6 : self.SenaryScoop
+        }
 
 
 class IceCream(Item):
     """IceCream item with a choice of food and additionals"""
-    def __init__(self, name, size, flavors):
+    def __init__(self, name, size, flavors, auto_size=True):
         """Create an Ice Cream with flavors and additions
 
         Parameters
@@ -59,9 +94,14 @@ class IceCream(Item):
         name : string
         size : IceCreamSizes
         flavors : list of Flavors
+        auto_size : bool default True
+            automatically set the size
         """
         self.__name = name
-        self.__size__ = size
+        if auto_size:
+            self.__size__ = IceCreamSizes.get_default_scoops(size)[len(flavors)]
+        else:
+            self.__size__ = size
 
         self.__flavors__ = flavors
         self.__additionals__ = []
@@ -88,6 +128,10 @@ class IceCream(Item):
     @property
     def get_num_additionals(self):
         return len(self.__additionals__)
+
+    @property
+    def get_num_flavors(self):
+        return len(self.__flavors__)
 
     @property
     def get_price(self):
@@ -123,7 +167,11 @@ class IceCream(Item):
         ----------
         size : IceCreamSizes
         """
-        self.__size__ = size
+        if self.get_num_flavors >= size.get_max_scoops:
+            return False
+        else:
+            self.__size__ = size
+            return True
 
     def set_name(self, name):
         """

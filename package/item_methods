@@ -1,0 +1,44 @@
+Item:
+    name:
+        get_name
+        set_name()
+    size:
+        get_size
+        set_size()
+    price:
+        get_price
+
+
+Drinks (Item):
+    flavors:
+        get_flavors
+        set_flavors()
+        add_flavor()
+        get_num_flavors
+    base:
+        get_base
+        set_base()
+    price:
+        add_flavor_price
+
+Food (Item):
+    toppings:
+        get_toppings
+        set_toppings()
+        add_topping()
+        get_num_toppings
+    food_choice:
+        get_food_choice
+        set_food_choice()
+
+IceCream (Item):
+    additionals:
+        get_additionals
+        set_additionals()
+        add_additional()
+        get_num_additional
+    flavors:
+        get_flavors
+        set_flavors()
+        add_flavors()
+        get_num_flavors

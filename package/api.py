@@ -1,14 +1,21 @@
 from flask import Flask, request
-from pydoc import locate
-import package.basics
+import package.basics as basics
 import package.drink as drink
 import package.food as food
-from drink import Bases
+import package.ice_cream as ic
+
+item_packages = (drink, food, ic)
 
 import sys
 
 def str_to_class(class_name):
-    return getattr(IT, class_name)
+    cls = None
+    for package in item_packages:
+        result = getattr(package, class_name, 0)
+        if result != 0:
+            cls = result
+            break
+    return cls
 
 app = Flask(__name__.split('.')[0])
 
@@ -33,20 +40,21 @@ def make_item():
 
     item_name = info.get('name')
 
-    item_size = IT.DrinkSizes[info.get('size')]
-
     item_class = str_to_class(info.get('class'))
 
     item_flavors = None
 
-    if item_class is IT.Drink:
-        item_base = IT.Bases[info.get('base')]
+    if item_class is drink.Drink:
+        item_base = drink.Bases[info.get('base')]
         item_flavors =  info.getlist('flavors[]')
         flavors = []
         for flavor in item_flavors:
-            flavors.append(IT.Flavors[flavor])
-        item = IT.Drink(item_name, base=item_base, size=item_size)
+            flavors.append(drink.Flavors[flavor])
+        item_size = drink.DrinkSizes[info.get('size')]
+
+        item = drink.Drink(item_name, base=item_base, size=item_size)
         item.set_flavors(flavors)
+
         return {
             'name': item.get_name,
             'base': item.get_base.value,
@@ -54,17 +62,20 @@ def make_item():
             'flavors': item_flavors,
             'price': str(item.get_price)
         }
-    elif item_class is IT.Food:
-        item_food_choice = IT.Foods(info.get('food_choice'))
+    elif item_class is food.Food:
+        item_food_choice = food.Foods(info.get('food_choice'))
         item_toppings = info.getlist('toppings[]')
         toppings = []
         for topping in item_toppings:
-            toppings.append(IT.Toppings[topping])
-        item = IT.Food(item_name, item_size, food_choice=item_food_choice)
+            toppings.append(food.Toppings[topping])
+        item_size = food.FoodSizes[info.get('size')]
+
+        item = food.Food(item_name, item_size, food_choice=item_food_choice)
         item.set_toppings(toppings)
         str_toppings = []
         for topping in item.get_toppings:
             str_toppings.append(topping.value)
+
         return {
             'name': item.get_name,
             'food_choice': item.get_food_choice.value,
@@ -72,3 +83,38 @@ def make_item():
             'toppings': str_toppings,
             'price': str(item.get_price)
         }
+    elif item_class is ic.IceCream:
+        data_flavors = info.getlist('ic_flavors')
+        flavors = []
+        for flavor in data_flavors:
+            flavors.append(ic.Flavors[flavor])
+        data_additionals = info.getlist('additionals')
+        additionals = []
+        for additional in data_additionals:
+            additionals.append(ic.Additionals[additional])
+        size = ic.IceCreamSizes[info.get('size')]
+
+        item = ic.IceCream(name=item_name, size=size, flavors=flavors)
+        item.set_additionals(additionals)
+
+        str_flavors = []
+        for flavor in item.get_flavors:
+            str_flavors.append(flavor.value)
+        str_additionals = []
+        for additional in item.get_additionals:
+            str_additionals.append(additional.value)
+
+        return {
+            'name': item.get_name,
+            'flavors': str_flavors,
+            'size': item.get_size.value,
+            'additionals': str_additionals,
+            'price': str(item.get_price)
+        }
+
+
+
+
+
+
+

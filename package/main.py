@@ -2,14 +2,14 @@
 from package.food import Toppings
 from test.testing import create_drink, create_food, create_ice_cream
 from food import Foods, Toppings
-from drink import Flavors
+from drink import Flavors, DrinkSizes
 import ice_cream as IC
 from order import Order
 
 if __name__ == '__main__':
     order = Order()
 
-    drink1 = create_drink(name="Baja Blast", flavors=[Flavors.Lime, Flavors.Lemon])
+    drink1 = create_drink(name="Baja Blast", flavors=[Flavors.Lime, Flavors.Lemon], size=DrinkSizes.Large)
 
     drink2 = create_drink(name="Sparkles", flavors=[Flavors.Cherry, Flavors.Blueberry, Flavors.Strawberry])
 

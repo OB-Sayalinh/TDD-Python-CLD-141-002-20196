@@ -1,4 +1,5 @@
 import unittest
+from sys import flags
 
 from test.testing import create_ice_cream
 from package.ice_cream import IceCream, Additionals, Flavors, IceCreamSizes
@@ -93,7 +94,7 @@ class IceCreamTests(unittest.TestCase):
 
     def test_get_price_multiple_flavors(self):
         size = IceCreamSizes.DoubleScoop
-        item = create_ice_cream(size=size)
+        item = create_ice_cream(size=size, auto_size=False)
         flavors = [Flavors.MintChocolateChip, Flavors.Smore]
         expected_result = self.assume_pricing(item, flavors=flavors)
 
@@ -104,7 +105,7 @@ class IceCreamTests(unittest.TestCase):
 
     def test_get_price_multiple_flavors2(self):
         size = IceCreamSizes.QuadrupleScoop
-        item = create_ice_cream(size=size)
+        item = create_ice_cream(size=size, auto_size=False)
         flavors = [Flavors.MintChocolateChip, Flavors.Smore,
                    Flavors.MintChocolateChip, Flavors.ButterPecan]
         expected_result = self.assume_pricing(item, flavors=flavors)
@@ -116,7 +117,7 @@ class IceCreamTests(unittest.TestCase):
 
     def test_get_price_multiple(self):
         size = IceCreamSizes.QuadrupleScoop
-        item = create_ice_cream(size=size)
+        item = create_ice_cream(size=size, auto_size=False)
         additionals = [Additionals.Cherry, Additionals.WhippedCream,
                        Additionals.CaramelSauce, Additionals.ChocolateSauce]
         flavors = [Flavors.MintChocolateChip, Flavors.Smore,
@@ -149,7 +150,7 @@ class IceCreamTests(unittest.TestCase):
 
     def test_get_max_flavors2(self):
         size = IceCreamSizes.DoubleScoop
-        item = create_ice_cream(size=size)
+        item = create_ice_cream(size=size, auto_size=False)
         expected_result = size.get_max_scoops
 
         result = item.get_max_flavors
@@ -167,16 +168,25 @@ class IceCreamTests(unittest.TestCase):
 
     def test_get_size(self):
         size = IceCreamSizes.DoubleScoop
-        item = create_ice_cream(size=size)
+        item = create_ice_cream(size=size, auto_size=False)
         expected_result = size
 
         result = item.get_size
 
         self.assertEqual(expected_result, result)
 
-    def test_get_flavors(self):
-        flavors = Flavors.Banana
+    def test_get_size_automated(self):
+        flavors = [Flavors.Banana, Flavors.ButterPecan]
         item = create_ice_cream(flavors=flavors)
+        expected_result = IceCreamSizes.DoubleScoop
+
+        result = item.get_size
+
+        self.assertEqual(expected_result, result)
+
+    def test_get_flavors(self):
+        flavors = [Flavors.Banana]
+        item = create_ice_cream(flavors=flavors, auto_size=False)
         expected_result = flavors
 
         result = item.get_flavors
@@ -192,6 +202,46 @@ class IceCreamTests(unittest.TestCase):
 
         self.assertEqual(expected_result, result)
 
+    def test_get_num_additionals(self):
+        additionals = [Additionals.Cherry, Additionals.ChocolateSauce]
+        item = create_ice_cream(additionals=additionals)
+        expected_result = 2
+
+        result = item.get_num_additionals
+
+        self.assertEqual(expected_result, result)
+
+    def test_get_num_additionals2(self):
+        additionals = [Additionals.Cherry, Additionals.ChocolateSauce]
+        add_additional = Additionals.WhippedCream
+        item = create_ice_cream(additionals=additionals)
+        expected_result = 3
+
+        item.add_additional(add_additional)
+        result = item.get_num_additionals
+
+        self.assertEqual(expected_result, result)
+
+    def test_get_num_flavors(self):
+        flavors = [Flavors.Chocolate, Flavors.Banana]
+        item = create_ice_cream(flavors=flavors)
+        expected_result = 2
+
+        result = item.get_num_flavors
+
+        self.assertEqual(expected_result, result)
+
+    def test_get_num_flavors2(self):
+        flavors = [Flavors.Chocolate, Flavors.Banana]
+        add_flavor = Flavors.MintChocolateChip
+        item = create_ice_cream(size=IceCreamSizes.TripleScoop, flavors=flavors, auto_size=False)
+        expected_result = 3
+
+        item.add_flavor(add_flavor)
+        result = item.get_num_flavors
+
+        self.assertEqual(expected_result, result)
+
     # Setters & Misc
 
     def test_set_size(self):
@@ -199,10 +249,26 @@ class IceCreamTests(unittest.TestCase):
         item = create_ice_cream()
         expected_result = size
 
+        result1 = item.set_size(size)
+        result2 = item.get_size
+
+        self.assertTrue(result1)
+        self.assertEqual(expected_result, result2)
+
+    def test_set_size_overfilled(self):
+        size = IceCreamSizes.Scoop
+        flavors = [Flavors.Banana, Flavors.ButterPecan]
+        item = create_ice_cream(flavors=flavors)
+        expected_result = IceCreamSizes.DoubleScoop
+
         item.set_size(size)
         result = item.get_size
 
         self.assertEqual(expected_result, result)
+
+        result = item.set_size(size)
+
+        self.assertFalse(result)
 
     def test_set_name(self):
         name = "IceCream"
@@ -259,7 +325,7 @@ class IceCreamTests(unittest.TestCase):
         size = IceCreamSizes.DoubleScoop
         flavors = [Flavors.Banana]
         flavor = Flavors.Chocolate
-        item = create_ice_cream(flavors=flavors, size=size)
+        item = create_ice_cream(flavors=flavors, size=size, auto_size=False)
         expected_result = flavors.copy()
         expected_result.append(flavor)
 
@@ -272,7 +338,7 @@ class IceCreamTests(unittest.TestCase):
         size = IceCreamSizes.DoubleScoop
         flavors = [Flavors.Banana]
         flavor = Flavors.Chocolate
-        item = create_ice_cream(flavors=flavors, size=size)
+        item = create_ice_cream(flavors=flavors, size=size, auto_size=False)
         expected_result = flavors.copy()
         expected_result.append(flavor)
 
@@ -317,26 +383,6 @@ class IceCreamTests(unittest.TestCase):
 
         item.add_additional(add_additional)
         result = item.get_additionals
-
-        self.assertEqual(expected_result, result)
-
-    def test_num_additionals(self):
-        additionals = [Additionals.Cherry, Additionals.ChocolateSauce]
-        item = create_ice_cream(additionals=additionals)
-        expected_result = 2
-
-        result = item.get_num_additionals
-
-        self.assertEqual(expected_result, result)
-
-    def test_num_additionals2(self):
-        additionals = [Additionals.Cherry, Additionals.ChocolateSauce]
-        add_additional = Additionals.WhippedCream
-        item = create_ice_cream(additionals=additionals)
-        expected_result = 3
-
-        item.add_additional(add_additional)
-        result = item.get_num_additionals
 
         self.assertEqual(expected_result, result)
 

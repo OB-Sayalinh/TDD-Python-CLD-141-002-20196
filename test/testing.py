@@ -49,7 +49,8 @@ def create_food(name="", food_choice=Foods.Hotdog, size=FoodSizes.Small, topping
     food.set_toppings(toppings)
     return food
 
-def create_ice_cream(name="", size=IceCreamSizes.Scoop, flavors=None, additionals=None):
+def create_ice_cream(name="", size=IceCreamSizes.Scoop, flavors=None, additionals=None,
+                     auto_size=True):
     """Create an ice cream
 
     Parameters
@@ -57,9 +58,10 @@ def create_ice_cream(name="", size=IceCreamSizes.Scoop, flavors=None, additional
     name : string, default ""
         name of ice cream
     size : IceCreamSizes, default IceCreamSizes.Scoop
-    flavors : list of ICFlavors, default [ICFlavors.Banana]
+    flavors : list of ICFlavors, default [Flavors.Banana]
     additionals :  list of Additionals, optional
-
+    auto_size : bool default True
+        automate size
 
     Returns
     ----------
@@ -70,7 +72,7 @@ def create_ice_cream(name="", size=IceCreamSizes.Scoop, flavors=None, additional
         flavors = []
     if additionals is None:
         additionals = []
-    ice_cream = IceCream(name, size, flavors)
+    ice_cream = IceCream(name=name, size=size, flavors=flavors, auto_size=auto_size)
     ice_cream.set_additionals(additionals)
     return ice_cream
 
