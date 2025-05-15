@@ -1,42 +1,85 @@
+getItem = async(type) => {
 
-selectType_elem = undefined
+    const { getItem } = await import("./call.js");
+
+    return getItem(type)
+
+}
+
+postItem = async(data) => {
+
+    const { postItem } = await import("./call.js");
+
+    return postItem(data)
+
+}
+
+itemInfo = null
+
+
+selectType_elem = document.getElementById('select_type')
 
 // Drink
-base_elem = undefined
-flavors_elem = undefined
+base_elem = document.getElementById('base')
+flavors_elem = document.getElementById('flavors_body')
 
 // Food
-foodChoice_elem = undefined
-toppings_elem = undefined
+
+foodChoice_elem = document.getElementById('food_choice')
+toppings_elem = document.getElementById('toppings_body')
 
 // Ice Cream
-ic_flavors_elem = undefined
-additionals_elem = undefined
-all_ic_flavors = [''] 
+
+ic_flavors_elem = document.getElementById('ic_flavors_body')
+additionals_elem = document.getElementById('additionals_body')
+
 
 class_elem = undefined
 
 current_type = undefined
 
-window.onload = () => {
-    selectType_elem = document.getElementById('select_type')
+window.onload = async() => {
+
+    // Set all item information
+    itemInfo = await getItem('')
+
+    create = (parent, json, name, asTd = true) => {
+        cell = document.createElement('td')
+
+        result = makeInputSelection(json, name)
+
+        if (asTd){
+
+            appendChildren(cell, result)
+
+            parent.appendChild(cell)
+
+        }
+        else{
+            appendChildren(parent, result)
+        }
+    }
 
     // Drink
 
-    base_elem = document.getElementById('base')
-    flavors_elem = document.getElementById('flavors_body')
+    create(base_elem, itemInfo.drink.bases, 'base', false)
+
+    create(flavors_elem, itemInfo.drink.flavors, 'flavors')
 
     // Food
 
-    foodChoice_elem = document.getElementById('food_choice')
-    toppings_elem = document.getElementById('toppings_body')
+    create(foodChoice_elem, itemInfo.food.food_choice, 'food_choice', false)
+
+    create(toppings_elem, itemInfo.food.toppings, 'toppings')
+
 
     // Ice Cream
 
-    ic_flavors_elem = document.getElementById('ic_flavors_body')
-    additionals_elem = document.getElementById('additionals_body')
+    create(ic_flavors_elem, itemInfo.ice_cream.flavors, 'ic_flavors')
 
-    ic_flavors_elem
+    create(additionals_elem, itemInfo.ice_cream.additionals, 'additionals')
+
+    // Classes
 
     class_elem = document.getElementById('class')
 
@@ -48,6 +91,33 @@ window.onload = () => {
     set_type(current_type)
 
 }
+
+makeInputSelection = (json, formName) => {
+    
+    keys = Object.keys(json)
+
+    select = document.createElement('select')
+    for(x = 0; x < keys.length; x++){
+        var name = keys[x]
+        text = json[name].name
+        option = create_option(name, text)
+        select.appendChild(option)
+    }
+
+    input = document.createElement('input')
+    input.type = 'hidden'
+    input.name = formName
+
+    input.value = select.value 
+
+    select.onchange = (e) => {
+        input.value = e.target.value 
+    }    
+
+    return [input, select]
+
+}
+
 
 function set_type(type){
     if (type == "Food"){
@@ -67,6 +137,8 @@ function set_type(type){
     }
     class_elem.value = type
 }
+
+// Visibility
 
 function set_drink_visibility(type){
     flavors_elem.style.display = type
@@ -89,6 +161,13 @@ function create_option(value, text){
     option.textContent = text
     return option
 }
+
+appendChildren = (node, elements) => {
+    for (x = 0; x < elements.length; x++){
+        node.appendChild(elements[x])
+    }
+}
+
 
 
 

@@ -26,36 +26,22 @@
         </div>
         <div id="base">
             <label for="base" id="base">Base:</label>
-            <input name="base" id="base" value="Water" />
         </div>
         <div id="food_choice">
             <label for="food_choice" id="food_choice">Food of Choice:</label>
-            <select name="" id="select_food_choice">
-                <option selected value="Chili">Chili</option>
-                <option value="Mustard">Mustard</option>
-            </select>
-            <input type="" name="food_choice" id="food_choice" value="Hotdog" />
         </div>
         <table><tbody>
             <tr id="flavors_body">
                 <td><label for="flavors">Flavors:</label></td>
-                <td><input type="text" name="flavors[]" id="flavors" value="Cherry" /></td>
-                <td><input type="text" name="flavors[]" value="Strawberry" style="max-width: 80px;"></td>
             </tr>
             <tr id="toppings_body">
                 <td><label for="toppings">Toppings:</label></td>
-                <td><input type="text" name="toppings[]" id="toppings" value="Chili" /></td>
-                <td><input type="text" name="toppings[]" value="Mustard" style="max-width: 80px;"></td>
             </tr>
             <tr id="ic_flavors_body">
                 <td><label for="ic_flavors">Flavors:</label></td>
-                <td><input type="text" name="ic_flavors" id="ic_flavors" value="Chocolate" /></td>
-                <td><input type="text" name="ic_flavors" value="Banana" style="max-width: 80px;"></td>
             </tr>
             <tr id="additionals_body">
                 <td><label for="additionals">Addons or Mix-ins:</label></td>
-                <td><input type="text" name="additionals" id="additionals" value="Whipped Cream" /></td>
-                <td><input type="text" name="additionals" value="Cherry" style="max-width: 80px;"></td>
             </tr>
         </table></tbody>
 
@@ -65,6 +51,21 @@
     </form>
 </body>
 
+<script type="importmap">
+        {
+          "imports": {
+            "index": "./index.js"
+          }
+        }
+</script>
+
+<!-- <script type="module">
+
+    import {} from 'index'
+
+</script> -->
+
 <script src="index.js"></script>
+
 
 </html>

@@ -1,12 +1,11 @@
 from flask import Flask, request
+from flask_cors import CORS, cross_origin
 import package.basics as basics
 import package.drink as drink
 import package.food as food
 import package.ice_cream as ic
 
 item_packages = (drink, food, ic)
-
-import sys
 
 def str_to_class(class_name):
     cls = None
@@ -18,6 +17,8 @@ def str_to_class(class_name):
     return cls
 
 app = Flask(__name__.split('.')[0])
+cors = CORS(app, resources={r"/items/*": {"origins": "http://127.0.0.1:5500"}})
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/')
 def hello_world():
@@ -27,9 +28,48 @@ def hello_world():
 def new():
     return '<p>Wow! New Message</p>'
 
-@app.get('/item')
+# Get Items
+
+@app.get('/items')
 def get_item():
-    return '<p>Up and running!</p>'
+    return {
+        'food' : get_food(),
+        'drink' : get_drink(),
+        'ice_cream' : get_ice_cream()
+    }
+
+@app.get('/items/food')
+def get_food():
+    topping = food.Toppings.Cherry
+    food_choice = food.Foods.Hotdog
+    size = food.FoodSizes.Small
+    return {
+        'toppings' : topping.get_dict(),
+        'food_choice': food_choice.get_dict(),
+        'size': size.get_dict()
+    }
+
+@app.get('/items/drink')
+def get_drink():
+    flavor = drink.Flavors.Cherry
+    base = drink.Bases.Water
+    size = drink.DrinkSizes.Small
+    return {
+        'flavors': flavor.get_dict(),
+        'bases': base.get_dict(),
+        'size': size.get_dict()
+    }
+
+@app.get('/items/ice-cream')
+def get_ice_cream():
+    additionals = ic.Additionals.Cherry
+    flavor = ic.Flavors.Banana
+    size = ic.IceCreamSizes.Scoop
+    return {
+        'additionals': additionals.get_dict(),
+        'flavors': flavor.get_dict(),
+        'size': size.get_dict()
+    }
 
 @app.post('/item')
 def make_item():
@@ -46,7 +86,7 @@ def make_item():
 
     if item_class is drink.Drink:
         item_base = drink.Bases[info.get('base')]
-        item_flavors =  info.getlist('flavors[]')
+        item_flavors =  info.getlist('flavors')
         flavors = []
         for flavor in item_flavors:
             flavors.append(drink.Flavors[flavor])
@@ -64,7 +104,7 @@ def make_item():
         }
     elif item_class is food.Food:
         item_food_choice = food.Foods(info.get('food_choice'))
-        item_toppings = info.getlist('toppings[]')
+        item_toppings = info.getlist('toppings')
         toppings = []
         for topping in item_toppings:
             toppings.append(food.Toppings[topping])
@@ -111,8 +151,6 @@ def make_item():
             'additionals': str_additionals,
             'price': str(item.get_price)
         }
-
-
 
 
 

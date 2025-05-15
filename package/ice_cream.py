@@ -83,6 +83,13 @@ class IceCreamSizes(BaseEnum):
             6 : self.SenaryScoop
         }
 
+    @classmethod
+    def get_dict(cls):
+        all_members = {}
+        for member in list(cls):
+            member_dict = {'name': member.value, 'price': member.get_price, 'scoops': member.get_max_scoops}
+            all_members[member.name] = member_dict
+        return all_members
 
 class IceCream(Item):
     """IceCream item with a choice of food and additionals"""

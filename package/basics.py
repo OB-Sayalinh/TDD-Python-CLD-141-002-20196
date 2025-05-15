@@ -13,6 +13,7 @@ class BaseEnum(Enum):
         Methods
         ----------
         get_price
+        get_dict
     """
     def __new__(cls, name, price=0):
         """
@@ -34,6 +35,14 @@ class BaseEnum(Enum):
     @property
     def get_price(self):
         return self._price_
+
+    @classmethod
+    def get_dict(cls):
+        all_members = {}
+        for member in list(cls):
+            member_dict = {'name': member.value, 'price': member.get_price}
+            all_members[member.name] = member_dict
+        return all_members
 
 
 # Rounding
