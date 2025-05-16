@@ -17,7 +17,7 @@ def str_to_class(class_name):
     return cls
 
 app = Flask(__name__.split('.')[0])
-cors = CORS(app, resources={r"/items/*": {"origins": "http://127.0.0.1:5500"}})
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/')
@@ -71,26 +71,29 @@ def get_ice_cream():
         'size': size.get_dict()
     }
 
-@app.post('/item')
+@app.route('/item', methods=['GET', 'POST'])
 def make_item():
 
     item = {}
 
-    info = request.form
+    info = request.get_json()
 
-    item_name = info.get('name')
+    item_name = info['name']
 
-    item_class = str_to_class(info.get('class'))
+    item_class = str_to_class(info['class'])
 
     item_flavors = None
 
     if item_class is drink.Drink:
-        item_base = drink.Bases[info.get('base')]
-        item_flavors =  info.getlist('flavors')
+        item_base = drink.Bases[info['base']]
+        item_flavors = info['flavors']
         flavors = []
-        for flavor in item_flavors:
-            flavors.append(drink.Flavors[flavor])
-        item_size = drink.DrinkSizes[info.get('size')]
+        if type(item_flavors) is list:
+            for flavor in item_flavors:
+                flavors.append(drink.Flavors[flavor])
+        else:
+            flavors = [drink.Flavors[item_flavors]]
+        item_size = drink.DrinkSizes[info['size']]
 
         item = drink.Drink(item_name, base=item_base, size=item_size)
         item.set_flavors(flavors)
@@ -104,11 +107,14 @@ def make_item():
         }
     elif item_class is food.Food:
         item_food_choice = food.Foods(info.get('food_choice'))
-        item_toppings = info.getlist('toppings')
+        item_toppings = info['toppings']
         toppings = []
-        for topping in item_toppings:
-            toppings.append(food.Toppings[topping])
-        item_size = food.FoodSizes[info.get('size')]
+        if type(item_toppings) is list:
+            for topping in item_toppings:
+                toppings.append(food.Toppings[topping])
+        else:
+            toppings = [food.Toppings[item_toppings]]
+        item_size = food.FoodSizes[info['size']]
 
         item = food.Food(item_name, item_size, food_choice=item_food_choice)
         item.set_toppings(toppings)
@@ -124,15 +130,21 @@ def make_item():
             'price': str(item.get_price)
         }
     elif item_class is ic.IceCream:
-        data_flavors = info.getlist('ic_flavors')
+        data_flavors = info['ic_flavors']
         flavors = []
-        for flavor in data_flavors:
-            flavors.append(ic.Flavors[flavor])
-        data_additionals = info.getlist('additionals')
+        if type(data_flavors) is list:
+            for flavor in data_flavors:
+                flavors.append(ic.Flavors[flavor])
+        else:
+            flavors = [ic.Flavors[data_flavors]]
+        data_additionals = info['additionals']
         additionals = []
-        for additional in data_additionals:
-            additionals.append(ic.Additionals[additional])
-        size = ic.IceCreamSizes[info.get('size')]
+        if type(data_additionals) is list:
+            for additional in data_additionals:
+                additionals.append(ic.Additionals[additional])
+        else:
+            additionals = [ic.Additionals[data_additionals]]
+        size = ic.IceCreamSizes[info['size']]
 
         item = ic.IceCream(name=item_name, size=size, flavors=flavors)
         item.set_additionals(additionals)

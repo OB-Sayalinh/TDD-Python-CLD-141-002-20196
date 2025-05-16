@@ -31,9 +31,27 @@ export async function getItem(type='') {
     }
 }
 
-export async function postItem(data) {
+export async function postItem(formData, asFormData=false) {
 
     let link = 'http://127.0.0.1:5000/item'
+
+    var object = {};
+    formData.forEach((value, key) => {
+        // Reflect.has in favor of: object.hasOwnProperty(key)
+        if(!Reflect.has(object, key)){
+            object[key] = value;
+            return;
+        }
+        if(!Array.isArray(object[key])){
+            object[key] = [object[key]];    
+        }
+        object[key].push(value);
+    });
+    var json = JSON.stringify(object);
+
+
+
+    let jsonData = JSON.stringify(formData)
 
     try {
         const response = await fetch(link, {
@@ -42,7 +60,7 @@ export async function postItem(data) {
             'Content-Type': 'application/json',
             // Add any other headers as needed
         },
-        body: data,
+        body: json,
         // If it is a POST/PUT request, add body
         // body: JSON.stringify({ key: 'value' }),
         });

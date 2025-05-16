@@ -6,8 +6,8 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="http://127.0.0.1:5000/item" method="post">
-        <select name="type" id="select_type">
+    <form action="http://127.0.0.1:5000/item" method="post" id="itemForm">
+        <select id="select_type">
             <option selected value="Drink">Drink</option>
             <option value="Food">Food</option>
             <option value="IceCream">Ice Storm</option>
@@ -20,9 +20,8 @@
             <label for="name">Name:</label>
             <input name="name" id="name" value="Name" />
         </div>
-        <div>
+        <div id="sizes">
             <label for="size">Size:</label>
-            <input name="size" id="size" value="Small" />
         </div>
         <div id="base">
             <label for="base" id="base">Base:</label>
@@ -46,7 +45,7 @@
         </table></tbody>
 
         </div>
-            <button>Create New Item</button>
+            <button id="createItem">Create New Item</button>
         </div>
     </form>
 </body>
